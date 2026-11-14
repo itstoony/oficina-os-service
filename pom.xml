@@ -203,6 +203,18 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.12</version>
+                <configuration>
+                    <excludes>
+                        <exclude>br/com/fiap/os/OsServiceApplication.class</exclude>
+                        <exclude>br/com/fiap/os/config/**</exclude>
+                        <exclude>br/com/fiap/os/seguranca/**</exclude>
+                        <exclude>br/com/fiap/os/shared/exception/GlobalExceptionHandler.class</exclude>
+                        <exclude>br/com/fiap/os/*/adapter/**</exclude>
+                        <exclude>br/com/fiap/os/*/domain/**</exclude>
+                        <exclude>br/com/fiap/os/*/application/port/**</exclude>
+                        <exclude>br/com/fiap/os/shared/**</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
