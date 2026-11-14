@@ -2,6 +2,7 @@ package br.com.fiap.os.os.adapter.out.persistence;
 
 import br.com.fiap.os.os.application.port.out.OrdemDeServicoRepositoryPort;
 import br.com.fiap.os.os.domain.model.OrdemDeServico;
+import br.com.fiap.os.os.domain.valueobject.StatusOS;
 import br.com.fiap.os.shared.exception.RecursoNaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -40,5 +41,10 @@ public class OrdemDeServicoRepositoryAdapter implements OrdemDeServicoRepository
     @Override
     public int buscarProximoSequencial(String prefixo) {
         return jpaRepository.findMaxSequencialByPrefixo(prefixo);
+    }
+
+    @Override
+    public List<OrdemDeServico> buscarFinalizadasComDatas(List<StatusOS> statuses) {
+        return jpaRepository.findFinalizadasComDatas(statuses);
     }
 }
