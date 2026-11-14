@@ -44,6 +44,13 @@ spec:
                 secretKeyRef:
                   name: os-secrets
                   key: mail-password
+            - name: NEW_RELIC_LICENSE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: os-secrets
+                  key: newrelic-license-key
+            - name: NEW_RELIC_APP_NAME
+              value: oficina-os-service-prod
           resources:
             requests:
               cpu: "250m"

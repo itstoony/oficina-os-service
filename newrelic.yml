@@ -1,0 +1,13 @@
+common: &default_settings
+  license_key: '<%= ENV["NEW_RELIC_LICENSE_KEY"] %>'
+  app_name: '<%= ENV["NEW_RELIC_APP_NAME"] || "oficina-os-service" %>'
+  distributed_tracing:
+    enabled: true
+  log_level: info
+
+production:
+  <<: *default_settings
+
+development:
+  <<: *default_settings
+  app_name: oficina-os-service-dev
