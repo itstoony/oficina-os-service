@@ -11,6 +11,7 @@ import br.com.fiap.os.catalogo.application.port.out.ServicoRepositoryPort;
 import br.com.fiap.os.catalogo.domain.model.Servico;
 import br.com.fiap.os.os.application.port.in.ItemServicoDTO;
 import br.com.fiap.os.os.application.port.in.OrdemDeServicoDTO;
+import br.com.fiap.os.os.application.port.out.NotificacaoEmailPort;
 import br.com.fiap.os.os.application.port.out.OrdemDeServicoRepositoryPort;
 import br.com.fiap.os.os.application.port.out.OsEventPublisherPort;
 import br.com.fiap.os.os.domain.model.OrdemDeServico;
@@ -42,6 +43,7 @@ class OrdemDeServicoServiceTest {
     @Mock private AtendenteRepositoryPort atendenteRepositorio;
     @Mock private ServicoRepositoryPort servicoRepositorio;
     @Mock private OsEventPublisherPort eventPublisher;
+    @Mock private NotificacaoEmailPort notificacaoEmail;
 
     @InjectMocks
     private OrdemDeServicoService service;

@@ -76,6 +76,12 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!-- Mail -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
         <!-- JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -222,7 +228,8 @@
                                     </limits>
                                     <excludes>
                                         <exclude>br.com.fiap.os.OsServiceApplication</exclude>
-                                        <exclude>br.com.fiap.os.adapter.out.messaging.*</exclude>
+                                        <exclude>br.com.fiap.os.os.adapter.out.messaging.*</exclude>
+                                        <exclude>br.com.fiap.os.os.adapter.out.email.*</exclude>
                                         <exclude>br.com.fiap.os.config.*</exclude>
                                         <exclude>br.com.fiap.os.shared.exception.GlobalExceptionHandler</exclude>
                                         <exclude>br.com.fiap.os.seguranca.config.*</exclude>

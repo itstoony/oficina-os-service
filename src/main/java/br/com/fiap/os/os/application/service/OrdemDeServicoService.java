@@ -13,6 +13,7 @@ import br.com.fiap.os.os.application.port.in.ItemServicoDTO;
 import br.com.fiap.os.os.application.port.in.OrdemDeServicoAdminUseCase;
 import br.com.fiap.os.os.application.port.in.OrdemDeServicoDTO;
 import br.com.fiap.os.os.application.port.in.OrdemDeServicoPublicUseCase;
+import br.com.fiap.os.os.application.port.out.NotificacaoEmailPort;
 import br.com.fiap.os.os.application.port.out.OrdemDeServicoRepositoryPort;
 import br.com.fiap.os.os.application.port.out.OsEventPublisherPort;
 import br.com.fiap.os.os.domain.model.ItemPeca;
@@ -41,6 +42,7 @@ public class OrdemDeServicoService implements OrdemDeServicoAdminUseCase, OrdemD
     private final AtendenteRepositoryPort atendenteRepositorio;
     private final ServicoRepositoryPort servicoRepositorio;
     private final OsEventPublisherPort eventPublisher;
+    private final NotificacaoEmailPort notificacaoEmail;
 
     @Override
     @Transactional(readOnly = true)
@@ -172,6 +174,8 @@ public class OrdemDeServicoService implements OrdemDeServicoAdminUseCase, OrdemD
         ordemDeServico.transicionarPara(StatusOS.AGUARDANDO_APROVACAO);
         OrdemDeServico salva = repositorio.salvar(ordemDeServico);
         publicarEventoSeguro(() -> eventPublisher.publicarOrcamentoSolicitado(salva), salva.getNumero(), "orcamento.solicitado");
+        notificarEmailSeguro(() -> notificacaoEmail.enviarOrcamentoParaAprovacao(
+                salva.getCliente().getEmail(), salva.getNumero(), salva.getValorTotal()));
         return toResponse(salva);
     }
 
@@ -218,6 +222,8 @@ public class OrdemDeServicoService implements OrdemDeServicoAdminUseCase, OrdemD
         ordemDeServico.transicionarPara(StatusOS.APROVADO);
         OrdemDeServico salva = repositorio.salvar(ordemDeServico);
         publicarEventoSeguro(() -> eventPublisher.publicarOsAprovada(salva), salva.getNumero(), "os.aprovada");
+        notificarEmailSeguro(() -> notificacaoEmail.enviarConfirmacaoAprovacao(
+                salva.getCliente().getEmail(), salva.getNumero()));
         return toStatusPublicoResponse(salva);
     }
 
@@ -228,6 +234,8 @@ public class OrdemDeServicoService implements OrdemDeServicoAdminUseCase, OrdemD
         ordemDeServico.transicionarPara(StatusOS.CANCELADA);
         OrdemDeServico salva = repositorio.salvar(ordemDeServico);
         publicarEventoSeguro(() -> eventPublisher.publicarOsCancelada(salva), salva.getNumero(), "os.cancelada");
+        notificarEmailSeguro(() -> notificacaoEmail.enviarConfirmacaoRecusa(
+                salva.getCliente().getEmail(), salva.getNumero()));
         return toStatusPublicoResponse(salva);
     }
 
@@ -243,6 +251,14 @@ public class OrdemDeServicoService implements OrdemDeServicoAdminUseCase, OrdemD
             publicacao.run();
         } catch (Exception e) {
             log.warn("Falha ao publicar evento {} para OS {}: {}", routingKey, numeroOs, e.getMessage());
+        }
+    }
+
+    private void notificarEmailSeguro(Runnable notificacao) {
+        try {
+            notificacao.run();
+        } catch (Exception e) {
+            log.warn("Falha ao enviar notificação por email: {}", e.getMessage());
         }
     }
 
