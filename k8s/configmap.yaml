@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: os-config
+  namespace: oficina
+data:
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://os-db:5432/os_service"
+  SPRING_DATASOURCE_USERNAME: "os_service"
+  SPRING_PROFILES_ACTIVE: "prod"
+  RABBITMQ_HOST: "rabbitmq"
+  RABBITMQ_PORT: "5672"
+  RABBITMQ_USERNAME: "guest"
+  SPRING_MAIL_HOST: "smtp.gmail.com"
+  SPRING_MAIL_PORT: "587"
+  SPRING_MAIL_USERNAME: "noreply@oficina.com.br"
+  OFICINA_APP_URL: "http://os-app:8080"
