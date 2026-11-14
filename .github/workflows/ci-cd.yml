@@ -96,12 +96,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: sa-east-1
+
       - uses: azure/setup-kubectl@v3
 
       - name: Configurar kubeconfig
-        run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+        run: aws eks update-kubeconfig --region sa-east-1 --name oficina-cluster
 
       - name: Deploy
         run: |
