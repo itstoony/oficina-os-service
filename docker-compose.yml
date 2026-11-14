@@ -1,0 +1,50 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/os
+      SPRING_DATASOURCE_USERNAME: os
+      SPRING_DATASOURCE_PASSWORD: os
+      RABBITMQ_HOST: rabbitmq
+      OFICINA_JWT_SECRET: ${OFICINA_JWT_SECRET:-minha-chave-secreta-super-segura-para-jwt-hs256}
+      SPRING_PROFILES_ACTIVE: prod
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: os
+      POSTGRES_USER: os
+      POSTGRES_PASSWORD: os
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_os:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U os"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_os:
