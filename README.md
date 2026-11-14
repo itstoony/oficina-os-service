@@ -171,7 +171,14 @@ GET             /api/admin/relatorios/tempo-medio
 # Relatório: target/site/jacoco/index.html
 ```
 
-> **Evidência de cobertura:** adicione aqui o print do relatório JaCoCo após rodar `./mvnw verify`
+![JaCoCo Coverage](docs/jacoco-coverage.png)
+
+| Pacote | Instruções | Branches | Linhas |
+|--------|-----------|----------|--------|
+| os.application.service | 93% | 66% | 158 |
+| atendimento.application.service | 96% | 50% | 82 |
+| catalogo.application.service | 100% | 100% | 35 |
+| **Total** | **95%** | **68%** | **275** |
 
 ### BDD (Cucumber)
 ```bash
