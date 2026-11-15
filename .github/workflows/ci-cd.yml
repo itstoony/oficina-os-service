@@ -114,6 +114,6 @@ jobs:
           kubectl apply -f k8s/configmap.yaml
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/hpa.yaml
-          kubectl rollout status deployment/os-app -n oficina --timeout=180s
+          kubectl rollout status deployment/os-app -n oficina --timeout=300s
 
       - run: kubectl get pods -n oficina
