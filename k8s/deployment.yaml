@@ -18,6 +18,7 @@ spec:
       containers:
         - name: os-service
           image: itstoony/os-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           envFrom:
