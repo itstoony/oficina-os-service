@@ -27,8 +27,10 @@ public class OsEventConsumer {
         log.info("Evento recebido: {}", routingKey);
         try {
             switch (routingKey) {
-                case RabbitMQConfig.ROUTING_EXECUCAO_FINALIZADA -> processarExecucaoFinalizada(evento);
+                case RabbitMQConfig.ROUTING_PAGAMENTO_CONFIRMADO -> processarPagamentoConfirmado(evento);
                 case RabbitMQConfig.ROUTING_PAGAMENTO_RECUSADO -> processarPagamentoRecusado(evento);
+                case RabbitMQConfig.ROUTING_ESTOQUE_INDISPONIVEL -> processarEstoqueIndisponivel(evento);
+                case RabbitMQConfig.ROUTING_EXECUCAO_FINALIZADA -> processarExecucaoFinalizada(evento);
                 default -> log.debug("Evento ignorado pelo os-service: {}", routingKey);
             }
         } catch (Exception e) {
@@ -46,6 +48,32 @@ public class OsEventConsumer {
             ordemDeServico.transicionarPara(StatusOS.FINALIZADA);
             repositorio.salvar(ordemDeServico);
             log.info("OS {} finalizada via evento execucao.finalizada", ordemDeServico.getNumero());
+        }
+    }
+
+    @Transactional
+    protected void processarPagamentoConfirmado(Map<String, Object> evento) {
+        String osId = (String) evento.get("osId");
+        if (osId == null) return;
+
+        OrdemDeServico ordemDeServico = repositorio.buscarPorId(UUID.fromString(osId));
+        if (ordemDeServico.getStatus() == StatusOS.APROVADO) {
+            ordemDeServico.transicionarPara(StatusOS.EM_EXECUCAO);
+            repositorio.salvar(ordemDeServico);
+            log.info("OS {} em execução via evento pagamento.confirmado", ordemDeServico.getNumero());
+        }
+    }
+
+    @Transactional
+    protected void processarEstoqueIndisponivel(Map<String, Object> evento) {
+        String osId = (String) evento.get("osId");
+        if (osId == null) return;
+
+        OrdemDeServico ordemDeServico = repositorio.buscarPorId(UUID.fromString(osId));
+        if (ordemDeServico.getStatus() == StatusOS.APROVADO) {
+            ordemDeServico.transicionarPara(StatusOS.CANCELADA);
+            repositorio.salvar(ordemDeServico);
+            log.info("OS {} cancelada via evento estoque.indisponivel", ordemDeServico.getNumero());
         }
     }
 
