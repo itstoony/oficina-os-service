@@ -70,10 +70,11 @@ public class OsEventConsumer {
         if (osId == null) return;
 
         OrdemDeServico ordemDeServico = repositorio.buscarPorId(UUID.fromString(osId));
-        if (ordemDeServico.getStatus() == StatusOS.APROVADO) {
+        StatusOS status = ordemDeServico.getStatus();
+        if (status == StatusOS.APROVADO || status == StatusOS.AGUARDANDO_APROVACAO) {
             ordemDeServico.transicionarPara(StatusOS.CANCELADA);
             repositorio.salvar(ordemDeServico);
-            log.info("OS {} cancelada via evento estoque.indisponivel", ordemDeServico.getNumero());
+            log.info("OS {} cancelada via evento estoque.indisponivel (estava: {})", ordemDeServico.getNumero(), status);
         }
     }
 
