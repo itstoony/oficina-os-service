@@ -223,14 +223,20 @@ public class OrdemDeServicoService implements OrdemDeServicoAdminUseCase, OrdemD
         OrdemDeServico ordemDeServico = repositorio.buscarPorNumero(numero);
         ordemDeServico.transicionarPara(StatusOS.APROVADO);
         OrdemDeServico salva = repositorio.salvar(ordemDeServico);
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-            @Override
-            public void afterCommit() {
-                publicarEventoSeguro(() -> eventPublisher.publicarOsAprovada(salva), salva.getNumero(), "os.aprovada");
-                notificarEmailSeguro(() -> notificacaoEmail.enviarConfirmacaoAprovacao(
-                        salva.getCliente().getEmail(), salva.getNumero()));
-            }
-        });
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    publicarEventoSeguro(() -> eventPublisher.publicarOsAprovada(salva), salva.getNumero(), "os.aprovada");
+                    notificarEmailSeguro(() -> notificacaoEmail.enviarConfirmacaoAprovacao(
+                            salva.getCliente().getEmail(), salva.getNumero()));
+                }
+            });
+        } else {
+            publicarEventoSeguro(() -> eventPublisher.publicarOsAprovada(salva), salva.getNumero(), "os.aprovada");
+            notificarEmailSeguro(() -> notificacaoEmail.enviarConfirmacaoAprovacao(
+                    salva.getCliente().getEmail(), salva.getNumero()));
+        }
         return toStatusPublicoResponse(salva);
     }
 
