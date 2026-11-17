@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface VeiculoJpaRepository extends JpaRepository<Veiculo, UUID> {
     List<Veiculo> findByClienteId(UUID clienteId);
+    boolean existsByPlacaValor(String placaValor);
 }

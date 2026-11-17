@@ -4,6 +4,7 @@ import br.com.fiap.os.atendimento.application.port.in.AtendenteDTO;
 import br.com.fiap.os.atendimento.application.port.in.AtendenteUseCase;
 import br.com.fiap.os.atendimento.application.port.out.AtendenteRepositoryPort;
 import br.com.fiap.os.atendimento.domain.model.Atendente;
+import br.com.fiap.os.shared.exception.RegraDeNegocioException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,9 @@ public class AtendenteService implements AtendenteUseCase {
     @Override
     @Transactional
     public AtendenteDTO.Response cadastrar(AtendenteDTO.CadastrarRequest request) {
+        if (repositorio.existsByEmail(request.email())) {
+            throw new RegraDeNegocioException("Já existe um atendente com o e-mail: " + request.email());
+        }
         Atendente atendente = Atendente.builder()
                 .nome(request.nome())
                 .email(request.email())

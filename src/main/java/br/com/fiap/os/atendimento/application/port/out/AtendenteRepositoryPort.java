@@ -10,4 +10,5 @@ public interface AtendenteRepositoryPort {
     Atendente buscarPorId(UUID id);
     List<Atendente> listar();
     void deletar(UUID id);
+    boolean existsByEmail(String email);
 }

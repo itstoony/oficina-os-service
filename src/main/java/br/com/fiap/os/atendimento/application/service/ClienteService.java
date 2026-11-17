@@ -5,6 +5,7 @@ import br.com.fiap.os.atendimento.application.port.in.ClienteUseCase;
 import br.com.fiap.os.atendimento.application.port.out.ClienteRepositoryPort;
 import br.com.fiap.os.atendimento.domain.model.Cliente;
 import br.com.fiap.os.atendimento.domain.valueobject.Documento;
+import br.com.fiap.os.shared.exception.RegraDeNegocioException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,10 @@ public class ClienteService implements ClienteUseCase {
     @Override
     @Transactional
     public ClienteDTO.Response cadastrar(ClienteDTO.CadastrarRequest request) {
+        String documentoNumero = request.documento().replaceAll("[^0-9]", "");
+        if (repositorio.existsByDocumentoNumero(documentoNumero)) {
+            throw new RegraDeNegocioException("Já existe um cliente com o documento: " + request.documento());
+        }
         Cliente cliente = Cliente.builder()
                 .nome(request.nome())
                 .email(request.email())

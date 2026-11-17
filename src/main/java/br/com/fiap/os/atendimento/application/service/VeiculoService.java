@@ -7,6 +7,7 @@ import br.com.fiap.os.atendimento.application.port.out.VeiculoRepositoryPort;
 import br.com.fiap.os.atendimento.domain.model.Cliente;
 import br.com.fiap.os.atendimento.domain.model.Veiculo;
 import br.com.fiap.os.atendimento.domain.valueobject.Placa;
+import br.com.fiap.os.shared.exception.RegraDeNegocioException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,10 @@ public class VeiculoService implements VeiculoUseCase {
     @Override
     @Transactional
     public VeiculoDTO.Response cadastrar(VeiculoDTO.CadastrarRequest request) {
+        String placaNormalizada = request.placa().toUpperCase().replaceAll("[^A-Z0-9]", "");
+        if (repositorio.existsByPlaca(placaNormalizada)) {
+            throw new RegraDeNegocioException("Já existe um veículo com a placa: " + request.placa());
+        }
         Cliente cliente = clienteRepositorio.buscarPorId(request.clienteId());
         Veiculo veiculo = Veiculo.builder()
                 .marca(request.marca())

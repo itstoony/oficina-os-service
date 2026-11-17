@@ -11,4 +11,5 @@ public interface VeiculoRepositoryPort {
     List<Veiculo> listar();
     List<Veiculo> listarPorClienteId(UUID clienteId);
     void deletar(UUID id);
+    boolean existsByPlaca(String placa);
 }

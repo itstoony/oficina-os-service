@@ -1,5 +1,6 @@
 package br.com.fiap.os.shared.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -30,6 +31,14 @@ public class GlobalExceptionHandler {
                 .map(erro -> erro.getField() + ": " + erro.getDefaultMessage())
                 .toList();
         return buildResponse(HttpStatus.BAD_REQUEST, erros.toString());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleIntegridade(DataIntegrityViolationException ex) {
+        String msg = ex.getMessage() != null && ex.getMessage().contains("duplicate key")
+                ? "Registro duplicado: já existe um cadastro com esses dados."
+                : "Violação de integridade dos dados.";
+        return buildResponse(HttpStatus.UNPROCESSABLE_ENTITY, msg);
     }
 
     @ExceptionHandler(Exception.class)

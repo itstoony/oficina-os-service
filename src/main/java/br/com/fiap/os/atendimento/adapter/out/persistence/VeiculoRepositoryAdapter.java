@@ -40,4 +40,9 @@ public class VeiculoRepositoryAdapter implements VeiculoRepositoryPort {
     public void deletar(UUID id) {
         jpaRepository.deleteById(id);
     }
+
+    @Override
+    public boolean existsByPlaca(String placa) {
+        return jpaRepository.existsByPlacaValor(placa);
+    }
 }

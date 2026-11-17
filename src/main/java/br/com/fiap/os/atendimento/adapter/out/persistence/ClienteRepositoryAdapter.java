@@ -35,4 +35,9 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
     public void deletar(UUID id) {
         jpaRepository.deleteById(id);
     }
+
+    @Override
+    public boolean existsByDocumentoNumero(String documentoNumero) {
+        return jpaRepository.existsByDocumentoNumero(documentoNumero);
+    }
 }

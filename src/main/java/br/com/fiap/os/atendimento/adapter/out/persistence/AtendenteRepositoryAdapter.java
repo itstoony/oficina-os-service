@@ -35,4 +35,9 @@ public class AtendenteRepositoryAdapter implements AtendenteRepositoryPort {
     public void deletar(UUID id) {
         jpaRepository.deleteById(id);
     }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return jpaRepository.existsByEmail(email);
+    }
 }

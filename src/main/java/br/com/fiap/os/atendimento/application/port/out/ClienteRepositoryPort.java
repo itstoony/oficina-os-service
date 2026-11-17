@@ -10,4 +10,5 @@ public interface ClienteRepositoryPort {
     Cliente buscarPorId(UUID id);
     List<Cliente> listar();
     void deletar(UUID id);
+    boolean existsByDocumentoNumero(String documentoNumero);
 }
