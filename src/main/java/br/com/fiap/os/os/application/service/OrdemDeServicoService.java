@@ -25,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -221,9 +223,14 @@ public class OrdemDeServicoService implements OrdemDeServicoAdminUseCase, OrdemD
         OrdemDeServico ordemDeServico = repositorio.buscarPorNumero(numero);
         ordemDeServico.transicionarPara(StatusOS.APROVADO);
         OrdemDeServico salva = repositorio.salvar(ordemDeServico);
-        publicarEventoSeguro(() -> eventPublisher.publicarOsAprovada(salva), salva.getNumero(), "os.aprovada");
-        notificarEmailSeguro(() -> notificacaoEmail.enviarConfirmacaoAprovacao(
-                salva.getCliente().getEmail(), salva.getNumero()));
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                publicarEventoSeguro(() -> eventPublisher.publicarOsAprovada(salva), salva.getNumero(), "os.aprovada");
+                notificarEmailSeguro(() -> notificacaoEmail.enviarConfirmacaoAprovacao(
+                        salva.getCliente().getEmail(), salva.getNumero()));
+            }
+        });
         return toStatusPublicoResponse(salva);
     }
 
