@@ -6,6 +6,14 @@ Microsserviço responsável pelo ciclo de vida completo das **Ordens de Serviço
 
 ---
 
+## Documentação de Arquitetura
+
+Para diagramas detalhados (componentes, sequência, ER, Hexagonal, Saga flows) consulte:
+
+**[docs/ARQUITETURA.md](docs/ARQUITETURA.md)**
+
+---
+
 ## Arquitetura
 
 ```
